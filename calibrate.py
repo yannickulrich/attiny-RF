@@ -1,41 +1,41 @@
-data = []
-def monitor(high, low):
+import serial
+import struct
+
+
+
+def monitor(high, low, n=1):
     global ser,data
-    ser.write(chr(high)+chr(low))
     
-    while True:
-        c = ser.read()
-        if c == 'S':
-            c = ser.read(4)
-            o = struct.unpack('>HH', c)
-            print o
-            data.append( (high, o[0], low, o[1]) )
-            break
+    for i in range(n):
+        ser.write(struct.pack('>HH', high, low))
+        while True:
+            c = ser.read()
+            if c == 'S':
+                c = ser.read(4)
+                o = struct.unpack('>HH', c)
+                print o
+                data.append( (high, o[0], low, o[1]) )
+                break
+
+data = []
 
 ser=serial.Serial('/dev/cu.usbmodem1421',timeout=1,baudrate=9600)
 
 # Obtain data
-monitor(25, 10);
-monitor(25, 10);
-monitor(25, 10);
-monitor(25, 10);
-monitor(2, 10);
-monitor(2, 10);
-monitor(2, 10);
-monitor(2, 10);
-monitor(2, 1);
-monitor(2, 1);
-monitor(2, 1);
-monitor(3, 1);
-monitor(3, 1);
-monitor(3, 1);
-monitor(3, 100);
-monitor(3, 100);
-monitor(3, 100);
+monitor(25000, 10000, 4)
+monitor(25000, 30000, 4)
+monitor(15000,  5000, 4)
+monitor(15000,   300, 4)
+
+monitor( 350, 10850, 8) # Sync bit   return 4-5, 133-135
+monitor( 350,  1050, 8) # Zero       return 4-5, 13
+monitor(1050,   350, 8) # One        return 13-14, 4-5
 
 # Output 
-X=[i[0] for i in data]+[i[2] for i in data]
-Y=[i[1] for i in data]+[i[3] for i in data]
-fit = np.polyfit(X,Y,1)
-fit_fn = np.poly1d(fit) 
-plot(X,Y, 'o', X, fit_fn(X), '--k')
+X=np.array([i[0] for i in data]+[i[2] for i in data])
+Y=np.array([i[1] for i in data]+[i[3] for i in data])
+
+a, _, _, _ = np.linalg.lstsq(X[:,np.newaxis], Y)
+
+plot(X,Y, 'o', X, a*X, '--k')
+print a

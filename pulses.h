@@ -1,6 +1,10 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include <stdlib.h>
+
 uint16_t oldHigh, oldLow, high, low;
 uint8_t status;
-uint8_t index;
 
 /*
  * STATUS BYTE
@@ -45,7 +49,7 @@ uint8_t index;
 
    
 
-ISR(TIM0_OVF_vect) {
+ISR(TIM0_COMPA_vect) {
 
     //overflow occurs at 1024/9600000*256=27.3ms/18.3Hz (measured at 26.7ms/18.75Hz) 
     if IS_ON(P_HIGH) // Currently in HIGH

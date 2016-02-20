@@ -12,12 +12,14 @@
 int main(void)
 {
     cli();
-    index = 0;
     status = 0b10000000;
-    //prescale timer
-    TCCR0B |= (1<<CS00);
-    //enable timer overflow interrupt       
-    TIMSK0 |= (1<<TOIE0);
+
+    OCR0A = 100;	       // Count up to..
+    TCNT0 = 0;		       // Counter value
+    TIMSK0 |= (1<<OCIE0A); //enable compare match interrupt
+    TCCR0A = (1<<WGM01);   //CTC
+    TCCR0B |= (1<<CS00);   //prescale timer
+
     
     // PB3 is the input
     DDRB &= ~(1 << PB3);

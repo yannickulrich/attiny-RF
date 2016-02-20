@@ -33,19 +33,26 @@ void setup() {
   
 }
 
-unsigned char incomingByte1 = 0;
-unsigned char incomingByte2 = 0;
 void loop() {
   if (Serial.available() > 0) {
       // read the incoming byte:
-      incomingByte1 = Serial.read();
-      incomingByte2 = Serial.read();
+      while (Serial.available() < 4)
+        delay(1);
+      unsigned char high = Serial.read();
+      unsigned char low  = Serial.read();
+      unsigned int d1 = low | (high<<8);
+
+      high = Serial.read();
+      low  = Serial.read();
+      unsigned int d2 = low | (high<<8);
+      
+      
       //mySwitch.send(0x050515+incomingByte, 24);
       delay(10);
       digitalWrite(10, HIGH);
-      delay(incomingByte1);
+      delayMicroseconds(d1);
       digitalWrite(10, LOW);
-      delay(incomingByte2);
+      delayMicroseconds(d2);
       digitalWrite(10, HIGH);
       delay(1000);
       digitalWrite(10, LOW);
@@ -55,12 +62,11 @@ void loop() {
       //Serial.println(incomingByte);
       //Serial.println(0x050515+incomingByte, HEX);
 
-      incomingByte1=0;
   }
 
   if (Serial1.available() > 0) {
       // read the incoming byte:
-      incomingByte1 = Serial1.read();
+      unsigned char incomingByte1 = Serial1.read();
       Serial.write(incomingByte1);
   }
 

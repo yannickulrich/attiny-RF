@@ -26,6 +26,10 @@ blink.elf: blink.o  serial.o
 	@echo "ELF $<"
 	@$(CC) $(CFLAGS) -o $@ $^
 
+calibrate.elf: calibrate.o  serial.o
+	@echo "ELF $<"
+	@$(CC) $(CFLAGS) -o $@ $^
+
 %.size: %.elf
 	@$(AVRSIZE) --mcu=$(BOARD) -C $<
 

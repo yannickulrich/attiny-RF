@@ -2,6 +2,21 @@ import serial
 import struct
 
 
+def sendBit(bit):
+    global ser
+    if bit == 1:
+        high = 1050
+        low = 350
+    elif bit == 0:
+        high = 350
+        low = 1050
+    else:
+        high = 350
+        low = 10850
+    ser.write(struct.pack('>HH', high, low))
+    print ser.read()
+    print struct.unpack('>HH', ser.read(4))
+
 
 def monitor(high, low, n=1):
     global ser,data

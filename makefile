@@ -30,6 +30,11 @@ calibrate.elf: calibrate.o  serial.o pulses.h
 	@echo "ELF $<"
 	@$(CC) $(CFLAGS) -o $@ $^
 
+recv.elf: recv.o  serial.o pulses.h
+	@echo "ELF $<"
+	@$(CC) $(CFLAGS) -o $@ $^
+
+
 %.size: %.elf
 	@$(AVRSIZE) --mcu=$(BOARD) -C $<
 

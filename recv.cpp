@@ -14,7 +14,7 @@
 #define I_LONG  14 //  1 050u
 #define I_SYNC 134 // 10 850u
 
-#define I_TOLERANCE 2
+#define I_TOLERANCE 5
 
 /* 
  * Sync bit: I_SHORT, I_SYNC
@@ -54,9 +54,15 @@ int main(void)
 	{
         
         _delay_ms(10);
+        if IS_ON(P_FAIL)
+        {
+            TURN_OFF(N_FAIL)
+            TxByte('F');
+            
+        }
+        
         if IS_ON(P_PROC)
         {
-            cli();
             
             if (DIFF(oldHigh, I_SHORT) < I_TOLERANCE)
             {
@@ -85,7 +91,6 @@ int main(void)
 
             
             TURN_OFF(N_PROC)
-            sei();
 
         }
 	}

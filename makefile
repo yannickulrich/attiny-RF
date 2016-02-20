@@ -9,7 +9,7 @@ BAUD = 19200
 PROGRAMMER = avrisp
 PORT = /dev/tty.usbmodem1411
 
-CFLAGS = -g -DF_CPU=1200000 -Wall -Os -mmcu=$(BOARD)
+CFLAGS = -g -DF_CPU=1200000 -Wall -Os -mmcu=$(BOARD) -Werror
 OFLAGS = -j .text -j .data -O ihex
 DFLAGS = -C $(DUDECONFIG) -P $(PORT) -b $(BAUD) -c $(PROGRAMMER) -p $(BOARD)
 

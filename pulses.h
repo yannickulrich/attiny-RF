@@ -55,13 +55,13 @@ ISR(TIM0_COMPA_vect) {
     if IS_ON(P_HIGH) // Currently in HIGH
     {
         high++;
-        if (high == 0xfff)
+        if (high == 0xffff)
             FAILED
     }
     else if IS_ON(P_LOW) // Currently in LOW
     {
         low++;
-        if (low == 0xfff)
+        if (low == 0xffff)
             FAILED
     }
 }

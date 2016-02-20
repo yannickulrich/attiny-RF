@@ -15,3 +15,10 @@ extern "C" {
     TxByte(((val) & 0xFF00) >>  8);\
     TxByte(((val) & 0x00FF)      );\
 }
+
+/*
+void serOut(const char* str)
+{
+   while (*str) TxByte (*str++);
+}
+*/

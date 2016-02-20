@@ -22,11 +22,11 @@ DFLAGS = -C $(DUDECONFIG) -P $(PORT) -b $(BAUD) -c $(PROGRAMMER) -p $(BOARD)
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 
-blink.elf: blink.o  serial.o
+blink.elf: blink.o  serial.o 
 	@echo "ELF $<"
 	@$(CC) $(CFLAGS) -o $@ $^
 
-calibrate.elf: calibrate.o  serial.o
+calibrate.elf: calibrate.o  serial.o pulses.h
 	@echo "ELF $<"
 	@$(CC) $(CFLAGS) -o $@ $^
 

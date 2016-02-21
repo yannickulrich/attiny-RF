@@ -4,17 +4,6 @@
 #include <stdlib.h>
 
 #include "serial.h"
-#include "pulses.h"
-
-
-#define DIFF(x,y) ((x<y)?(y-x):(x-y))
-
-
-#define I_SHORT  4 //    350u
-#define I_LONG  14 //  1 050u
-#define I_SYNC 134 // 10 850u
-
-#define I_TOLERANCE 5
 
 /* 
  * Sync bit: I_SHORT, I_SYNC
@@ -32,14 +21,9 @@
 int main(void)
 {
     cli();
-    status = 0b10000000;
-
-    OCR0A = 100;	       // Count up to..
-    TCNT0 = 0;		       // Counter value
-    TIMSK0 |= (1<<OCIE0A); //enable compare match interrupt
-    TCCR0A = (1<<WGM01);   //CTC
-    TCCR0B |= (1<<CS00);   //prescale timer
-
+    
+    TCCR0B |= (1<<CS02) | (1<<CS00);  //prescale timer
+    TIMSK0 |= (1<<TOIE0); //enable timer overflow interrupt
     
     // PB3 is the input
     DDRB &= ~(1 << PB3);
@@ -49,52 +33,102 @@ int main(void)
     GIMSK |= (1<<PCIE  );     // enable PCINT interrupt in the general interrupt mask
 
     sei(); 
+    while(1);
+}
+
+#define DIFF(x,y) ((x<y)?(y-x):(x-y))
+#define I_SHORT 3
+#define I_LONG 10
+#define I_SYNC 105
+#define CLEAR_COMMAND { \
+    length = 0;\
+    command = 0; \
+}
+
+
+uint32_t command;
+uint8_t length;
+
+
+#define REED_OPEN 0x1014
+#define REED_CLOSE 0x1015
+#define REMOTE_BUTTON1 0x154115
+#define REMOTE_BUTTON2 0x154114
+
+
+void handleCommand()
+{
+    #ifdef DEBUG
+    SEND_32(command);
+    TxByte(length);
+    #endif
     
-	while(1)
-	{
-        
-        _delay_ms(10);
-        if IS_ON(P_FAIL)
-        {
-            TURN_OFF(N_FAIL)
-            TxByte('F');
-            
-        }
-        
-        if IS_ON(P_PROC)
-        {
-            
-            if (DIFF(oldHigh, I_SHORT) < I_TOLERANCE)
-            {
-                if (DIFF(oldLow, I_SYNC) < I_TOLERANCE) // Sync bit
-                {
-                    TxByte('S');
-                }
-                else if (DIFF(oldLow, I_LONG) < I_TOLERANCE) // Zero
-                {
-                    TxByte('0');
-                }
-                else
-                    TxByte('?');
-            }
-            else if (  (DIFF(oldHigh, I_LONG) < I_TOLERANCE) && (DIFF(oldLow, I_SHORT) < I_TOLERANCE)  ) // One
-            {
-                 TxByte('1');
-            }
-            else
-                TxByte('/');
-            
-            SEND_INT(oldHigh);
-            SEND_INT(oldLow);
-            oldHigh = 0;
-            oldLow = 0;
-
-            
-            TURN_OFF(N_PROC)
-
-        }
-	}
+    switch(command)
+    {
+      case REED_OPEN     : TxByte('O'); break;
+      case REED_CLOSE    : TxByte('C'); break;
+      case REMOTE_BUTTON1: TxByte('L'); break;
+      case REMOTE_BUTTON2: TxByte('M'); break;
+      
+    }
 }
 
 
 
+ISR(TIM0_OVF_vect)
+{  
+    CLEAR_COMMAND;
+}
+ISR(PCINT0_vect)
+{
+    cli();
+    if (PINB & (1 << PB3)) // Rising
+    {
+        if (DIFF(TCNT0, I_SHORT) < 2) // 1
+        {
+            #ifdef DEBUG
+            TxByte('1');
+            #endif
+            command <<= 1;
+            command |= 1;
+            length++;
+        }
+        else if (DIFF(TCNT0, I_LONG) < 2)
+        {
+            #ifdef DEBUG
+            TxByte('0');
+            #endif
+            command <<= 1;
+            length++;
+        }
+        else if (DIFF(TCNT0, I_SYNC) < 10)
+        {
+            #ifdef DEBUG
+            TxByte('S');
+            #endif
+            handleCommand();
+            CLEAR_COMMAND;
+        }
+        else
+        {
+            #ifdef DEBUG
+            TxByte('?');
+            TxByte(TCNT0);
+            #endif
+            
+            CLEAR_COMMAND;
+        }
+        if (command & 0b10000000000000000000000000000000)
+        {
+            #ifdef DEBUG
+            TxByte('R');
+            #endif
+            CLEAR_COMMAND;
+        }
+        
+    }
+    
+    TCNT0 = 0;
+    
+    sei();
+}

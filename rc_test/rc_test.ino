@@ -6,26 +6,42 @@ void transmit(int nHighPulses, int nLowPulses) {
 }
 void send1()
 {
-  Serial.write(0xf1);
+  //Serial.write('1');
   transmit(3,1);
 }
 void send0()
 {
-  Serial.write(0xf0);
+  //Serial.write('0');
   transmit(1,3);
 }
 void sendSync()
 {
-  Serial.write(0xf2);
+  //Serial.write('S');
   transmit(1,31);
 }
 
+
+void send(const char* sCodeWord) {
+    int i = 0;
+    while (sCodeWord[i] != '\0') {
+      switch(sCodeWord[i]) {
+        case '0':
+          send0();
+        break;
+        case '1':
+          send1();
+        break;
+      }
+      i++;
+    }
+    sendSync();
+}
 
 
 void setup() {
 
   Serial.begin(9600);
-  Serial1.begin(9600);
+  Serial1.begin(115200);
 
   pinMode(13,OUTPUT);
   pinMode(10,OUTPUT);
@@ -35,17 +51,17 @@ void setup() {
 void loop() {
   if (Serial.available() > 0) {
       // read the incoming byte:
-      while (Serial.available() < 2)
-        delay(1);
-      unsigned char high = Serial.read();
-      unsigned char low  = Serial.read();
-      unsigned int d1 = low | (high<<8);
+      
 
 
 
 #ifdef CALIBRATE
-      while (Serial.available() < 2)
+      while (Serial.available() < 4)
         delay(1);
+      unsigned char high = Serial.read();
+      unsigned char low  = Serial.read();
+      unsigned int d1 = low | (high<<8);
+      
       high = Serial.read();
       low  = Serial.read();
       unsigned int d2 = low | (high<<8);
@@ -63,18 +79,31 @@ void loop() {
       digitalWrite(10, LOW);
       digitalWrite(13, LOW);
 #else
-      //Serial.print("Sending ");Serial.println(d1);
-      uint8_t bitLength = 8;
+      /*while (Serial.available() < 3)
+        delay(1);
+      unsigned char high = Serial.read();
+      unsigned char middle  = Serial.read();
+      unsigned char low  = Serial.read();
+      long d1 = low | (middle<<8) | (high<<16);
+      
+      uint8_t bitLength = 24;
+      Serial.print(high);
+      Serial.print(' ');
+      Serial.print(middle);
+      Serial.print(' ');
+      Serial.print(low);
+      Serial.print(' ');
+      Serial.println(d1);
+      */
       digitalWrite(13, HIGH);
-      while (bitLength > 0) {
-        if (d1 & 1)
-          send1();
-        else
-          send0();
-        d1 >>= 1;
-        bitLength--;
-        digitalWrite(13, LOW);
-      }
+      
+      Serial.read();
+      send( "000101010100000100010101");
+      
+      send1();
+      digitalWrite(13, LOW);
+      
+      
 #endif
 
   }
@@ -85,4 +114,19 @@ void loop() {
       Serial.write(incomingByte1);
   }
 
+}
+
+
+
+char* dec2binWcharfill(unsigned long dec, unsigned int bitLength, char fill) {
+  static char bin[32];
+
+  bin[bitLength] = '\0';
+  while (bitLength > 0) {
+    bitLength--;
+    bin[bitLength] = (dec & 1) ? '1' : fill;
+    dec >>= 1;
+  }
+
+  return bin;
 }

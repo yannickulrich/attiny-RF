@@ -15,6 +15,15 @@ extern "C" {
     TxByte(((val) & 0xFF00) >>  8);\
     TxByte(((val) & 0x00FF)      );\
 }
+#define SEND_16 SEND_INT
+
+#define SEND_32(val) { \
+	TxByte(((val) & 0xFF000000) >> 24);\
+    TxByte(((val) & 0x00FF0000) >> 16);\
+    TxByte(((val) & 0x0000FF00) >>  8);\
+    TxByte(((val) & 0x000000FF)      );\
+}
+
 
 /*
 void serOut(const char* str)

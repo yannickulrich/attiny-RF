@@ -14,7 +14,15 @@
 
 #define bitcnt r18
 #define delayArg 19
-#define TXDELAY 38
+
+#if F_CPU == 1200000
+#define TXDELAY 38 ; 9600 Baud
+#elif F_CPU == 9600000L
+#define TXDELAY 25 ; 115200 Baud
+#else
+#error
+#endif
+
 
 .global TxByte
 ; transmit byte in r24 - 15 instructions

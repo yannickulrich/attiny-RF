@@ -28,4 +28,5 @@ ISR(PCINT0_vect)
         TxByte(TCNT0);
     }
     TCNT0 = 0;
+    sei();
 }

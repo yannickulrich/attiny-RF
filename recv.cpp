@@ -59,6 +59,7 @@ uint8_t length;
 void handleCommand()
 {
     #ifdef DEBUG
+    TxByte('S');
     SEND_32(command);
     TxByte(length);
     #endif
@@ -101,7 +102,7 @@ ISR(PCINT0_vect)
             command <<= 1;
             length++;
         }
-        else if (DIFF(TCNT0, I_SYNC) < 10)
+        else if (DIFF(TCNT0, I_SYNC) < 15)
         {
             #ifdef DEBUG
             TxByte('S');
@@ -118,7 +119,7 @@ ISR(PCINT0_vect)
             
             CLEAR_COMMAND;
         }
-        if (command & 0b10000000000000000000000000000000)
+        if ( (command & 0b10000000000000000000000000000000)||(length == 32) )
         {
             #ifdef DEBUG
             TxByte('R');

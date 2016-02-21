@@ -5,9 +5,9 @@ DUDECONFIG = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/etc/avrd
 AVRSIZE    = /Applications/Arduino.app/Contents/Java/hardware/tools/avr/bin/avr-size
 
 BOARD = attiny13
-BAUD = 19200
-PROGRAMMER = avrisp
-PORT = /dev/tty.usbmodem1411
+BAUD = 19200                 # Default for Arduino ISP
+PROGRAMMER = avrisp          # Default for Arduino ISP
+PORT = /dev/tty.usbmodem1411 # The tty device of the Arduino UNO 
 
 CFLAGS = -g -DF_CPU=9600000 -Wall -Os -mmcu=$(BOARD) -Werror
 OFLAGS = -j .text -j .data -O ihex

@@ -65,6 +65,8 @@ PORT = /dev/tty.usbmodem1411 # The tty device of the Arduino UNO
 Now you can flash ATtiny using the makefile, i.e. run
 `make recv.upload`. Your ATtiny will now send recognised RF commands over serial at 115200 Baud.
 
+## Further information
+For further details, please refer to the [build log](tree/master/build-log)
 
 ## Serial interface
 The code for the serial transmission was taken from [Ralph Doncaster](http://forum.arduino.cc/index.php?topic=207467.0). 

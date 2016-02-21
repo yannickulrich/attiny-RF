@@ -18,7 +18,7 @@ avrdude -P /dev/tty.usbmodem1411 -c avrisp -p attiny13 -U lfuse:r:-:h -b 19200
 
 ## Testing circuit
 For testing I used an Arduino UNO as an ISP and an Arduino Micro to 'talk' to the running ATtiny.
-![alt text](https://raw.githubusercontent.com/yannickulrich/attiny-RF/master/test_schem.png "Schematics")
+![alt text](https://raw.githubusercontent.com/yannickulrich/attiny-RF/master/build-log/test_schem.png "Schematics")
 
 ## RF commands
 Since the ATtiny13 has very little RAM, an out-of-the-box solution would not work. `recv.cpp` is able recognise commands. You can add or change the recognised commands by changing the `handleCommand()` function. If a command is recognised you can use `TxByte(char)` to send it over serial. Example:

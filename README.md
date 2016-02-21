@@ -48,7 +48,7 @@ void handleCommand()
 ```
 
 ## Installation
-You need to update the makefile to fit your system. The default configuration works on Mac OS X with an Arduino installation and the Arduino UNO connected to `/dev/tty.usbmodem1411`. Otherwise, adapt the first eleven lines
+You need to update the makefile.rules to fit your system. The default configuration works on Mac OS X with an Arduino installation and the Arduino UNO connected to `/dev/tty.usbmodem1411`. Otherwise, adapt the first eleven lines
 ```
 Makefile
 CC         = <PATH TO avr-gcc>

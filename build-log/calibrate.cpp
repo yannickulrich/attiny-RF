@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 
-#include "serial.h"
+#include "../serial.h"
 int main()
 {
     cli();

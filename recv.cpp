@@ -52,8 +52,10 @@ uint8_t length;
 
 void handleCommand()
 {
+    #ifdef DEBUG
     SEND_32(command);
     TxByte(length);
+    #endif
 }
 
 
@@ -90,6 +92,7 @@ ISR(PCINT0_vect)
             TxByte('S');
             #endif
             handleCommand();
+            CLEAR_COMMAND;
         }
         else
         {

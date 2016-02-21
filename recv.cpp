@@ -50,12 +50,27 @@ uint32_t command;
 uint8_t length;
 
 
+#define REED_OPEN 0x1014
+#define REED_CLOSE 0x1015
+#define REMOTE_BUTTON1 0x154115
+#define REMOTE_BUTTON2 0x154114
+
+
 void handleCommand()
 {
     #ifdef DEBUG
     SEND_32(command);
     TxByte(length);
     #endif
+    
+    switch(command)
+    {
+      case REED_OPEN     : TxByte('O'); break;
+      case REED_CLOSE    : TxByte('C'); break;
+      case REMOTE_BUTTON1: TxByte('L'); break;
+      case REMOTE_BUTTON2: TxByte('M'); break;
+      
+    }
 }
 
 

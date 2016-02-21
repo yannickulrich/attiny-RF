@@ -133,3 +133,7 @@ In order to turn the series of 1s and 0s into a code word, an efficient assembly
 * If a SYNC bit is received, the code word is completed and can be analysed. Afterwards it is cleared.
 * If the timer overflows or something else is received, i.e. noise, the code word is cleared.
 * If the code word is about to flow over, i.e. the next bit would exceed the 32bit variable (`command & 0b10000000000000000000000000000000`) the code word is cleared.
+
+
+## Picture
+![alt text](https://raw.githubusercontent.com/yannickulrich/attiny-RF/master/build-log/setup.jpg "The setup")

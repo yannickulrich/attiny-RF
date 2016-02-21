@@ -5,6 +5,17 @@ With this code I am trying to implement a dead-simple RF decoder: An [433 MHz RF
 
 Note: This is work in progress.
 
+## Fuse
+In factory settings your ATtiny will run at 1.2MHz instead of 9.6MHz. Use the following command
+```
+avrdude -P /dev/tty.usbmodem1411 -b 19200 -c avrisp -p attiny13 -U lfuse:w:0x7a:m
+```
+You can read your fuse settings with 
+```
+avrdude -P /dev/tty.usbmodem1411 -c avrisp -p attiny13 -U lfuse:r:-:h -b 19200
+```
+
+
 ## Testing circuit
 For testing I used an Arduino UNO as an ISP and an Arduino Micro to 'talk' to the running ATtiny. Schematics will following.
 
